@@ -6,7 +6,7 @@ struct node{
     struct node* next;
 };
 struct node* head = NULL;
-int size = 0;
+int size = -1;
 
 void insertBeg();
 void insertEnd();
@@ -15,14 +15,17 @@ void deleteEnd();
 void deleteBeg();
 void deletePos();
 void display();
+int isEmpty();
 
 struct node* createNode();
 
 void main(){
-    int ch = NULL;
-    while(ch!=0){
+    int ch;
+    while(1){
+        printf("Size %d\n",size);
         printf("1. Insert @ Beginning\n2. Insert @ End\n3.Insert @ Pos\n4. Delete @ End\n");
-        printf("5. Delete @ Beginning\n6.Delete @ Pos\n7.Display");
+        printf("5. Delete @ Beginning\n6. Delete @ Pos\n7. Display\n0. Exit\nEnter Your Choice: ");
+        scanf("%d",&ch);
         switch (ch)
         {
         case 1:
@@ -46,11 +49,15 @@ void main(){
         case 7:
             display();
             break;
+        case 0:
+            exit(0);
+            break;
         default:
             printf("Enter the correct option.\n");
             break;
         }
     }
+    printf("Bye!");
 }
 
 void insertBeg(){
@@ -90,6 +97,7 @@ void insertPos()
         struct node* newNode = createNode();
         newNode->next = head; 
         head = newNode;
+        size++;
     }
     else {
         struct node* newNode = createNode();
@@ -116,45 +124,50 @@ void display(){
 }
 
 void deleteEnd(){
-    struct node* prevPtr = head;
-    struct node* ptr = head;
-    while(ptr->next!=NULL){
-        prevPtr = ptr;
-        ptr = ptr->next;
+    if(!isEmpty()){
+        struct node* prevPtr = head;
+        struct node* ptr = head;
+        while(ptr->next!=NULL){
+            prevPtr = ptr;
+            ptr = ptr->next;
+        }
+        free(ptr);
+        if(size==0){
+            head = NULL;
+            size--;
+        } else{
+            prevPtr->next=NULL;
+            size--;
+        }
+        printf("Last Element deleted\n");
     }
-    free(ptr);
-    size--;
-    if(size==0){
-        head = NULL;
-    } else{
-        prevPtr->next=NULL;
-    }
-    printf("Last Element deleted\n");
 }
 
 void deleteBeg(){
-    struct node* ptr = head;
-    head = head->next;
-    free(ptr);
-    size--;
-    printf("First Element deleted\n");
+    if(!isEmpty()){
+        struct node* ptr = head;
+        head = head->next;
+        free(ptr);
+        size--;
+        printf("First Element deleted\n");
+    }
 }
 
 void deletePos(){
-    int pos=0;
+    int pos;
     printf("Enter Position to delete: ");
     scanf("%d",&pos);
-    if((pos < 0) || (pos > size-1)){
-        printf("Invalid position to insert. Position must be less than size of list\n");
+    if((pos < 0) || (pos > size)){
+        printf("Invalid position to delete. Position must be less than size of list\n");
     } 
     else {
-        int counter=0;
         struct node* prevPtr = head;
         struct node* ptr = head;
         if((pos==0)&&(ptr->next!=NULL)){
             head = ptr->next;
         }
         else{
+            int counter=1;
             while(counter!=pos)
             {
                 prevPtr = ptr;
@@ -173,4 +186,12 @@ struct node* createNode(){
     printf("Enter the Integer to insert: ");
     scanf("%d",&newNode->data);
     return newNode;
+}
+
+int isEmpty(){
+    if(head==NULL){
+        return 1;
+    }else{
+        return 0;
+    }
 }
